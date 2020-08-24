@@ -1,0 +1,100 @@
+package com.javarush.task.task18.task1827;
+
+/* 
+Прайсы
+*/
+
+import java.io.*;
+
+public class Solution {
+    public static void main(String[] args) throws Exception {
+/*        String greetings = "products.txt\n";
+        byte[] bytes = greetings.getBytes();
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        System.setIn(inputStream);*/
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String strFileName;
+        strFileName = reader.readLine();
+        reader.close();
+        //System.out.println(strFileName);
+
+        //args = "-c very very big red shorts 300.00 15".split(" ");
+        //args = "-c shorts 300.00 15".split(" ");
+        //args = "".split(" ");
+        if ((args.length >= 4) && (args[0].equals("-c"))) {
+         //System.out.println(key+" "+productName +" "+price+" "+quantity);
+                //System.out.println("-c");
+                FileInputStream fileInputStream = new FileInputStream(strFileName);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+                String stringLine = "";
+                Integer lastNumber = 0;
+                //int cntStings = 0;
+                while ((stringLine = bufferedReader.readLine()) != null) {
+                    //list.add(stringLine);
+                    if (stringLine.length() > 0) {
+                        //System.out.println(stringLine.substring(0, 7).trim());
+                        String lastNumberString = stringLine.substring(0, 8).trim();
+                        if (isNumber(lastNumberString))
+                            lastNumber = Integer.parseInt(lastNumberString);
+                        //else System.out.println("NOT NUMBER");
+                        //cntStings++;
+                    }
+                }
+            //System.out.println(cntStings);
+            bufferedReader.close();
+                fileInputStream.close();
+                //System.out.println("lastNumber = " + lastNumber);
+                String nextNumber = "" + (lastNumber + 1);
+                nextNumber = setLength(nextNumber, 8);
+
+                String productName = "";
+                String price = "";
+                String quantity = "";
+                if (args.length == 4){
+                    productName = args[1];
+                    price = args[2];
+                    quantity = args[3];
+                } else {
+                    for (int i = 1; i < args.length - 2; i++) {
+                        productName += args[i] + " ";
+                    }
+                    price = args[args.length - 2];
+                    quantity = args[args.length - 1];
+                }
+                //productName = setLength(productName, 30);
+                //price = setLength(price, 8);
+                //quantity = setLength(quantity, 4);
+                //String addString = nextNumber + "" + productName + "" + price + "" + quantity + System.lineSeparator();
+                String addString = String.format("%-8.8s%-30.30s%-8.8s%-4.4s%n",nextNumber,
+                        productName, price, quantity);
+                //System.out.println("addString = " + addString);
+
+                FileOutputStream fileOutputStream = new FileOutputStream(strFileName, true);
+                fileOutputStream.write(addString.getBytes());
+                fileOutputStream.close();
+        }
+    }
+
+      public static boolean isNumber(String str){
+          try {
+              Integer.parseInt(str);
+              return true;
+          }
+          catch(NumberFormatException e){
+              return false;
+          }
+      }
+
+    public static String setLength(String str, int len) {
+        if (str.length() > len)
+            str = str.substring(0, len);
+        else {
+            for (int i = str.length(); i < len; i++) {
+                str += " ";
+            }
+        }
+        return str;
+    }
+
+}

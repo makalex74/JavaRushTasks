@@ -6,7 +6,6 @@
 .repository/
 *.iml
 *.iws
-*.jrtc
 *.class
 *.info
 *.properties

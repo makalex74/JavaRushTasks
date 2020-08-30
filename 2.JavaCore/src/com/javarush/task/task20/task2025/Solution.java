@@ -38,7 +38,7 @@ public class Solution {
                                 }
                             }
                         }
-                    } //нулевой конец метательного блока
+                    } //конец нулевого метательного блока
                     boolean bool1 = true; //запуск блока генерации уникальных номеров
                     int counterNine = 0;
                     int counterZero = 0;
@@ -67,7 +67,7 @@ public class Solution {
                         long tempDigit = 0;
                         for (int value : temp) {
                             if (tempDigit >= 0) {
-                                tempDigit += pows[value][temp.length];
+                                tempDigit += pows[value][temp.length]; //370 = 3*3*3 + 7*7*7 + 0*0*0
                             }
                         }
                         if (tempDigit == newDigit) {
@@ -105,13 +105,17 @@ public class Solution {
     //способ преобразования массива в цифру (включая условия)
     public static int[] digitToArray(long num, int len, long N) {
         String temp = Long.toString(num);
+        //System.out.println("temp = "+temp);
         int[] newArray = new int[0];
         if (temp.length() == len && num > 0 && num < N) {
             newArray = new int[temp.length()];
             for (int i = 0; i < temp.length(); i++) {
                 newArray[i] = temp.charAt(temp.length() - 1 - i) - '0';
+                //System.out.println("temp.charAt(temp.length() - 1 - i) = "+temp.charAt(temp.length() - 1 - i));
+                //System.out.println("temp.charAt(temp.length() - 1 - i) - '0' = "+(temp.charAt(temp.length() - 1 - i) - '0'));
             }
         }
+        //System.out.println("newArray = "+Arrays.toString(newArray));
         return newArray;
     }
 
@@ -124,8 +128,8 @@ public class Solution {
         System.out.println(Arrays.toString(result1));*/
 
         long start = System.currentTimeMillis();
-        long[] result = getNumbers(Long.MAX_VALUE);
-        //long[] result = getNumbers(10000);
+        //long[] result = getNumbers(Long.MAX_VALUE);
+        long[] result = getNumbers(1000);
 /*        for (long l : result) {
             System.out.println(l);
         }*/

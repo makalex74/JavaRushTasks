@@ -43,19 +43,19 @@ public class Solution {
         if (telNumber.matches("^\\+\\d+-?\\d+-?\\d+") && cntDigit == 12 ){
             return true;
         }
-        //+10 скобки
+        //10 скобки
         if (telNumber.matches("^\\d*[\\(]{1}\\d{3}[\\)]{1}\\d*") && cntDigit == 10){
             return true;
         }
-        //+10 скобки 1 дефис
+        //10 скобки 1 дефис
         if (telNumber.matches("^\\d*[\\(]{1}\\d{3}[\\)]{1}\\d+-{1}\\d+") && cntDigit == 10){
             return true;
         }
-        //+10 скобки 2 дефиса
+        //10 скобки 2 дефиса
         if (telNumber.matches("^\\d*[\\(]{1}\\d{3}[\\)]{1}\\d+-{1}\\d+-{1}\\d+") && cntDigit == 10){
             return true;
         }
-        //+10 0-2 дефиса
+        //10 0-2 дефиса
         if (telNumber.matches("^\\d+-?\\d+-?\\d+") && cntDigit == 10){
             return true;
         }

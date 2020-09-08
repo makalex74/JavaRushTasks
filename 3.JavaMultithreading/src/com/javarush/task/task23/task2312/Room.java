@@ -1,24 +1,21 @@
 package com.javarush.task.task23.task2312;
 
+import java.awt.event.KeyEvent;
+import java.sql.PseudoColumnUsage;
+
 public class Room {
-    public static Room game;
     private int width;
     private int height;
     private Snake snake;
     private Mouse mouse;
 
+    public static Room game;
+
     public Room(int width, int height, Snake snake) {
         this.width = width;
         this.height = height;
         this.snake = snake;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
+        game = this;
     }
 
     public Snake getSnake() {
@@ -27,6 +24,14 @@ public class Room {
 
     public Mouse getMouse() {
         return mouse;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public void setWidth(int width) {
@@ -45,31 +50,85 @@ public class Room {
         this.mouse = mouse;
     }
 
-    public void sleep(){
+    /**
+     * Основной цикл программы.
+     * Тут происходят все важные действия
+     */
+    public void run() throws InterruptedException {
+        //Создаем объект "наблюдатель за клавиатурой" и стартуем его.
+        KeyboardObserver keyboardObserver = new KeyboardObserver();
+        keyboardObserver.start();
 
+        //пока змея жива
+        while (snake.isAlive()) {
+            //"наблюдатель" содержит события о нажатии клавиш?
+            if (keyboardObserver.hasKeyEvents()) {
+                KeyEvent event = keyboardObserver.getEventFromTop();
+                //Если равно символу 'q' - выйти из игры.
+                if (event.getKeyChar() == 'q') return;
+
+                //Если "стрелка влево" - сдвинуть фигурку влево
+                if (event.getKeyCode() == KeyEvent.VK_LEFT)
+                    snake.setDirection(SnakeDirection.LEFT);
+                    //Если "стрелка вправо" - сдвинуть фигурку вправо
+                else if (event.getKeyCode() == KeyEvent.VK_RIGHT)
+                    snake.setDirection(SnakeDirection.RIGHT);
+                    //Если "стрелка вверх" - сдвинуть фигурку вверх
+                else if (event.getKeyCode() == KeyEvent.VK_UP)
+                    snake.setDirection(SnakeDirection.UP);
+                    //Если "стрелка вниз" - сдвинуть фигурку вниз
+                else if (event.getKeyCode() == KeyEvent.VK_DOWN)
+                    snake.setDirection(SnakeDirection.DOWN);
+            }
+
+            snake.move();   //двигаем змею
+            print();        //отображаем текущее состояние игры
+            sleep();        //пауза между ходами
+        }
+
+        System.out.println("Game Over!");
     }
 
-    public void run(){
-
-    }
-    public void print(){
-
-    }
-
-    public void createMouse(){
-        mouse = new Mouse((int) (Math.random() * width),(int) (Math.random() * height));
+    public void print() {
+        //Создаем массив, куда будем "рисовать" текущее состояние игры
+        //Рисуем все кусочки змеи
+        //Рисуем мышь
+        //Выводим все это на экран
     }
 
-    public void eatMouse(){
+    public void eatMouse() {
         createMouse();
     }
 
-    public static void main(String[] args) {
-        Snake snake = new Snake(50,50);
-        Room room = new Room(400,200,snake);
-        Room.game = room;
-        snake.setDirection(SnakeDirection.DOWN);
-        Room.game.createMouse();
-        Room.game.run();
+    public void createMouse() {
+        int x = (int) (Math.random() * width);
+        int y = (int) (Math.random() * height);
+
+        mouse = new Mouse(x, y);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        game = new Room(20, 20, new Snake(10, 10));
+        game.snake.setDirection(SnakeDirection.DOWN);
+        game.createMouse();
+        game.run();
+    }
+
+    public void sleep() throws InterruptedException {
+        // делаем паузу, длинна которой зависит от длинны змеи
+        int snakeLength = snake.getSections().size();
+        if (snakeLength >= 0 && snakeLength < 11) {
+            Thread.sleep(500);
+        }
+        else{
+            if (snakeLength >= 11 && snakeLength < 15){
+                Thread.sleep(300);
+            }
+            else{
+                if (snakeLength >= 15){
+                    Thread.sleep(200);
+                }
+            }
+        }
     }
 }

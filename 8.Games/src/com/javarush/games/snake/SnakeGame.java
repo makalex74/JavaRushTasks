@@ -14,12 +14,12 @@ public class SnakeGame extends Game {
         setScreenSize(WIDTH, HEIGHT);
         createGame();
     }
-    private void createGame(){
-        turnDelay = 300;
-        setTurnTimer(turnDelay);
+    private void createGame() {
         snake = new Snake(WIDTH / 2, HEIGHT / 2);
         createNewApple();
         drawScene();
+        turnDelay = 300;
+        setTurnTimer(turnDelay);
     }
     private void drawScene(){
         for (int x = 0; x < WIDTH; x++) {

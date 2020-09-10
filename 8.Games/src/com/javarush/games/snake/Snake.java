@@ -58,7 +58,7 @@ public class Snake {
             isAlive = false;
             return;
         }
-        snakeParts.set(0, newHead);
+        snakeParts.add(0, newHead);
         if ((newHead.x == apple.x) && (newHead.y == apple.y)){
             apple.isAlive = false;
         }

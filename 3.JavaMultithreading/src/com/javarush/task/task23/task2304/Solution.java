@@ -37,7 +37,7 @@ public class Solution {
         @Override
         public void refreshAllData(Map criteria) {
             MockDB mockDB = new MockDB();
-            Solution.this.tasks=mockDB.getFakeTasks(criteria);
+            Solution.this.tasks = mockDB.getFakeTasks(criteria);
         }
 
     }
@@ -46,7 +46,7 @@ public class Solution {
         @Override
         public void refreshAllData(Map criteria) {
             MockDB mockDB = new MockDB();
-            Solution.this.names=mockDB.getFakeNames(criteria);
+            Solution.this.names = mockDB.getFakeNames(criteria);
         }
     }
 

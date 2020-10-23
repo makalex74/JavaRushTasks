@@ -9,17 +9,6 @@ import java.util.concurrent.*;
 public class Server {
     private static Map<String, Connection> connectionMap = new ConcurrentHashMap();
 
-    public static void sendBroadcastMessage(Message message) {
-        for (Map.Entry<String, Connection> connection:connectionMap.entrySet()) {
-            try {
-                connection.getValue().send(message);
-            } catch (IOException e) {
-                ConsoleHelper.writeMessage("Не смогли отправить сообщение " + connection.getValue().getRemoteSocketAddress());
-            }
-        }
-
-    }
-
     public static void main(String[] args) {
         ConsoleHelper.writeMessage("Введите порт сервера:");
         int port = ConsoleHelper.readInt();
@@ -35,6 +24,17 @@ public class Server {
         }
     }
 
+    public static void sendBroadcastMessage(Message message) {
+        for (Map.Entry<String, Connection> connection:connectionMap.entrySet()) {
+            try {
+                connection.getValue().send(message);
+            } catch (IOException e) {
+                ConsoleHelper.writeMessage("Сервер не смог отправить сообщение " + connection.getValue().getRemoteSocketAddress());
+            }
+        }
+    } //sendBroadcastMessage
+
+
     private static class Handler extends Thread {
         private Socket socket;
 
@@ -45,12 +45,12 @@ public class Server {
         private String serverHandshake(Connection connection) throws IOException, ClassNotFoundException{
             while (true){
               connection.send(new Message(MessageType.NAME_REQUEST, "Введите имя пользователя: "));
-              Message messageReseive = connection.receive();
-              if (messageReseive.getType() != MessageType.USER_NAME) {
+              Message messageReceive = connection.receive();
+              if (messageReceive.getType() != MessageType.USER_NAME) {
                   ConsoleHelper.writeMessage("Получено сообщение от "+connection.getRemoteSocketAddress()+ ". Запрошенный тип сообщения != MessageType.USER_NAME, повторяем запрос.");
                   continue;
               }
-              String userName = messageReseive.getData();
+              String userName = messageReceive.getData();
               if (userName.length() == 0) {
                   ConsoleHelper.writeMessage("Запрошенное имя пользователя пустое, повторяем запрос.");
                   continue;
@@ -71,7 +71,7 @@ public class Server {
         private void notifyUsers(Connection connection, String userName) throws IOException{
             for (Map.Entry<String, Connection> conn:connectionMap.entrySet()) {
                 try {
-                    if (!userName.equals(conn.getKey())) {
+                    if (! userName.equals(conn.getKey())) {
                         connection.send(new Message(MessageType.USER_ADDED, conn.getKey()));
                     }
                 } catch (IOException e) {
@@ -80,11 +80,102 @@ public class Server {
             }
         } //notifyUsers
 
-    }
+        private void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException{
+            while (true){
+                Message messageReseive = connection.receive();
+                if (messageReseive.getType() == MessageType.TEXT) {
+                    sendBroadcastMessage(new Message(MessageType.TEXT, userName +": "+messageReseive.getData()));
+                }
+                else{
+                    ConsoleHelper.writeMessage("Ошибка: Тип сообщения от "+connection.getRemoteSocketAddress()+ " не является MessageType.TEXT.");
+                }
+            }
+        } //serverMainLoop
+
+        @Override
+        public void run() {
+            ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом "+socket.getRemoteSocketAddress()+ ".");
+            String userName = null;
+            try (Connection connection = new Connection(socket)){
+                //Вызывать метод, реализующий рукопожатие с клиентом, сохраняя имя нового клиента.
+                userName = serverHandshake(connection);
+                //Разослать всем участникам чата информацию об имени присоединившегося участника
+                sendBroadcastMessage(new Message(MessageType.USER_ADDED, userName));
+                //Сообщить новому участнику о существующих участниках.
+                notifyUsers(connection, userName);
+                //Запустить главный цикл обработки сообщений сервером.
+                serverMainLoop(connection, userName);
+
+            } catch (IOException | ClassNotFoundException e) {
+                ConsoleHelper.writeMessage("Ошибка при обмене данными с " + socket.getRemoteSocketAddress());
+            }
+            //Удалить запись для этого имени из connectionMap и разослать всем остальным участникам сообщение с типом USER_REMOVED и сохраненным именем.
+            if (userName != null) {
+                connectionMap.remove(userName);
+                sendBroadcastMessage(new Message(MessageType.USER_REMOVED, userName));
+            }
+            ConsoleHelper.writeMessage("Соединение с " + socket.getRemoteSocketAddress() + " закрыто.");
+        }
+
+    } //class Handler
+
+
 
 }
 
 /*
+Чат (11)
+Пришло время написать главный метод класса Handler, который будет вызывать все вспомогательные методы, написанные ранее.
+Реализуем метод void run() в классе Handler.
+
+Он должен:
+1. Выводить сообщение, что установлено новое соединение с удаленным адресом, который можно получить с помощью метода getRemoteSocketAddress().
+2. Создавать Connection, используя поле socket.
+3. Вызывать метод, реализующий рукопожатие с клиентом, сохраняя имя нового клиента.
+4. Рассылать всем участникам чата информацию об имени присоединившегося участника (сообщение с типом USER_ADDED).
+Подумай, какой метод подойдет для этого лучше всего.
+5. Сообщать новому участнику о существующих участниках.
+6. Запускать главный цикл обработки сообщений сервером.
+7. Обеспечить закрытие соединения при возникновении исключения.
+8. Отловить все исключения типа IOException и ClassNotFoundException, вывести в консоль информацию, что произошла ошибка при обмене данными с удаленным адресом.
+9. После того как все исключения обработаны, если п.11.3 отработал и возвратил нам имя, мы должны удалить запись для этого имени из connectionMap и разослать всем остальным участникам сообщение с типом USER_REMOVED и сохраненным именем.
+10. Последнее, что нужно сделать в методе run() - вывести сообщение, информирующее что соединение с удаленным адресом закрыто.
+
+Наш сервер полностью готов. Попробуй его запустить.
+
+
+Требования:
+1. Метод run() должен выводить на экран сообщение о том, что было установлено соединение с удаленным адресом (используя метод getRemoteSocketAddress()).
+2. Метод run() должен создавать новое соединение (connection) используя в качестве параметра поле socket.
+3. Метод run() должен вызывать метод serverHandshake() используя в качестве параметра только что созданное соединение; результатом будет имя пользователя (userName).
+4. Метод run() должен вызывать метод sendBroadcastMessage() используя в качестве параметра новое сообщение (MessageType.USER_ADDED, userName).
+5. Метод run() должен вызывать метод notifyUsers() используя в качестве параметров connection и userName.
+6. Метод run() должен вызывать метод serverMainLoop используя в качестве параметров connection и userName.
+7. Прежде чем завершиться, метод run() должен удалять из connectionMap запись соответствующую userName, и отправлять всем участникам чата сообщение о том, что текущий пользователь был удален.
+8. Метод run() должен корректно обрабатывать исключения IOException и ClassNotFoundException.
+
+
+Чат (10)
+Этап третий - главный цикл обработки сообщений сервером.
+
+Добавь приватный метод void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException,
+где значение параметров такое же, как и у метода notifyUsers().
+
+Он должен:
+1. Принимать сообщение клиента
+2. Если принятое сообщение - это текст (тип TEXT), то формировать новое текстовое сообщение путем конкатенации: имени клиента, двоеточия, пробела и текста сообщения.
+Например, если мы получили сообщение с текстом "привет чат" от пользователя "Боб", то нужно сформировать сообщение "Боб: привет чат".
+3. Отправлять сформированное сообщение всем клиентам с помощью метода sendBroadcastMessage().
+4. Если принятое сообщение не является текстом, вывести сообщение об ошибке
+5. Организовать бесконечный цикл, внутрь которого перенести функционал пунктов 10.1-10.4.
+
+
+Требования:
+1. В классе Handler должен быть создан метод private void serverMainLoop(Connection connection, String userName).
+2. Метод serverMainLoop() должен в бесконечном цикле получать сообщения от клиента (используя метод receive() класса Connection).
+3. Если сообщение, полученное методом serverMainLoop(), имеет тип MessageType.TEXT, то должно быть отправлено новое сообщение всем участникам чата используя метод sendBroadcastMessage() (форматирование сообщения описано в условии).
+4. Если сообщение, полученное методом serverMainLoop(), имеет тип отличный от MessageType.TEXT, метод sendBroadcastMessage() не должен быть вызван, и должно быть выведено сообщение об ошибке.
+
 Чат (9)
 Этап второй, но не менее важный - отправка клиенту (новому участнику) информации об остальных клиентах (участниках) чата.
 

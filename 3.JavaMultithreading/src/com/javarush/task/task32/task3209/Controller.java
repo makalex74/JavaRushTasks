@@ -2,13 +2,11 @@ package com.javarush.task.task32.task3209;
 
 import com.javarush.task.task32.task3209.listeners.UndoListener;
 
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Controller {
     private View view;
@@ -19,9 +17,6 @@ public class Controller {
         this.view = view;
     }
 
-    public void init(){
-
-    }
     public void exit(){
         System.exit(0);
     }
@@ -68,8 +63,234 @@ public class Controller {
         return stringWriter.toString();
     }
 
+    public void createNewDocument() {
+        view.selectHtmlTab();
+        resetDocument();
+        view.setTitle("HTML редактор");
+        view.resetUndo();
+        currentFile = null;
+    }
+
+    public void init(){
+        createNewDocument();
+    }
+
+    public void saveDocumentAs() {
+        view.selectHtmlTab();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new HTMLFileFilter());
+        if (fileChooser.showSaveDialog(view) == JFileChooser.APPROVE_OPTION) {
+            currentFile = fileChooser.getSelectedFile();
+            view.setTitle(currentFile.getName());
+
+            try (FileWriter fileWriter = new FileWriter(currentFile)) {
+                new HTMLEditorKit().write(fileWriter, document, 0, document.getLength());
+            } catch (IOException | BadLocationException e) {
+                ExceptionHandler.log(e);
+            }
+        }
+    }
+
+    public void saveDocument() {
+        view.selectHtmlTab();
+        if (currentFile == null) {
+            saveDocumentAs();
+        }
+        else {
+            try (FileWriter fileWriter = new FileWriter(currentFile)) {
+                new HTMLEditorKit().write(fileWriter, document, 0, document.getLength());
+            } catch (IOException | BadLocationException e) {
+                ExceptionHandler.log(e);
+            }
+        }
+
+    }
+
+    public void openDocument() {
+        view.selectHtmlTab();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new HTMLFileFilter());
+        if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+            currentFile = fileChooser.getSelectedFile();
+            resetDocument();
+            view.setTitle(currentFile.getName());
+
+            try (FileReader fileReader = new FileReader(currentFile)) {
+                new HTMLEditorKit().read(fileReader, document, 0);
+            } catch (IOException | BadLocationException e) {
+                ExceptionHandler.log(e);
+            }
+            view.resetUndo();
+        }
+    }
+
 }
 /*
+HTML Editor (24)
+Твой html редактор готов!
+Ты научился:
+- Создавать приложения с графическим интерфейсом.
+- Работать с диалоговыми окнами.
+- Пользоваться классами из библиотеки Swing.
+- Реализовывать взаимодействие компонентов программы с помощью событий, слушателей, действий.
+- Усилил свои знания в области MVC.
+
+Что можно улучшить в разработанном редакторе:
+- Добавить панель инструментов, повторяющую функционал меню.
+- Добавить подсветку html тегов на второй вкладке.
+- Добавить возможность загрузки документа из Интернет.
+- Расширить возможности редактора (вставка картинки, ссылки и т.д.)
+
+Поздравляю, так держать!
+
+
+Требования:
+1. html редактор готов!
+
+
+HTML Editor (23)
+23.1. Напишем метод для сохранения открытого файла saveDocument().
+Метод должен работать также, как saveDocumentAs(), но не запрашивать файл у пользователя, а использовать currentFile.
+Если currentFile равен null, то вызывать метод saveDocumentAs().
+23.2. Пришло время реализовать метод openDocument().
+Метод должен работать аналогично методу saveDocumentAs(), в той части, которая отвечает за выбор файла.
+
+Подсказка: Обрати внимание на имя метода для показа диалогового окна.
+
+Когда файл выбран, необходимо:
+23.2.1. Установить новое значение currentFile.
+23.2.2. Сбросить документ.
+23.2.3. Установить имя файла в заголовок у представления.
+23.2.4. Создать FileReader, используя currentFile.
+23.2.5. Вычитать данные из FileReader-а в документ document с помощью объекта класса HTMLEditorKit.
+23.2.6. Сбросить правки (вызвать метод resetUndo представления).
+23.2.7. Если возникнут исключения - залогируй их и не пробрасывай наружу.
+Проверь работу пунктов меню Сохранить и Открыть.
+
+
+Требования:
+1. Метод saveDocument() в контроллере должен переключать представление на html вкладку.
+2. Метод saveDocument() в контроллере должен создавать FileWriter на базе currentFile, если currentFile != null.
+3. Метод saveDocument() в контроллере должен используя HTMLEditorKit переписывать данные из документа document в объект FileWriter-а, если currentFile != null.
+4. Метод saveDocument() в контроллере должен вызывать метод saveDocumentAs(), если currentFile == null.
+5. Метод saveDocument() в контроллере не должен кидать исключения, а логировать через ExceptionHandler.
+6. Метод openDocument() в контроллере должен переключать представление на html вкладку.
+7. Метод openDocument() в контроллере должен создавать новый объект для выбора файла JFileChooser.
+8. Метод openDocument() в контроллере должен устанавливать объекту класса JFileChooser в качестве фильтра объект HTMLFileFilter.
+9. Метод openDocument() в контроллере должен, используя метод showOpenDialog() у JFileChooser показывать диалоговое окно "Open File" для выбора файла.
+10. Метод openDocument() в контроллере должен установить новое значение currentFile, если пользователь подтвердит выбор файла.
+11. Метод openDocument() в контроллере должен сбросить документ, если пользователь подтвердит выбор файла.
+12. Метод openDocument() в контроллере должен устанавливать имя файла в качестве заголовка окна представления, если пользователь подтвердит выбор файла.
+13. Метод openDocument() в контроллере должен создавать FileReader на базе currentFile, если пользователь подтвердит выбор файла.
+14. Метод openDocument() в контроллере должен используя HTMLEditorKit вычитать данные из FileReader-а в документ document, если пользователь подтвердит выбор файла.
+15. Метод openDocument() в контроллере должен сбросить правки, если пользователь подтвердит выбор файла.
+16. Метод openDocument() в контроллере не должен кидать исключения, а логировать через ExceptionHandler.
+
+
+HTML Editor (22)
+Реализуем в контроллере метод для сохранения файла под новым именем saveDocumentAs().
+Реализация должна:
+22.1. Переключать представление на html вкладку.
+22.2. Создавать новый объект для выбора файла JFileChooser.
+22.3. Устанавливать ему в качестве фильтра объект HTMLFileFilter.
+22.4. Показывать диалоговое окно "Save File" для выбора файла.
+22.5. Если пользователь подтвердит выбор файла:
+22.5.1. Сохранять выбранный файл в поле currentFile.
+22.5.2. Устанавливать имя файла в качестве заголовка окна представления.
+22.5.3. Создавать FileWriter на базе currentFile.
+22.5.4. Переписывать данные из документа document в объекта FileWriter-а аналогично тому, как мы это делали в методе getPlainText().
+22.6. Метод не должен кидать исключения.
+Проверь работу пункта меню Сохранить как...
+
+Требования:
+1. Метод saveDocumentAs() в контроллере должен переключать представление на html вкладку.
+2. Метод saveDocumentAs() в контроллере должен создавать новый объект для выбора файла JFileChooser.
+3. Метод saveDocumentAs() в контроллере должен устанавливать объекту класса JFileChooser в качестве фильтра объект HTMLFileFilter.
+4. Метод saveDocumentAs() в контроллере должен, используя метод showSaveDialog() у JFileChooser показывать диалоговое окно "Save File" для выбора файла.
+5. Метод saveDocumentAs() в контроллере должен сохранять выбранный файл в поле currentFile, если пользователь подтвердит выбор файла.
+6. Метод saveDocumentAs() в контроллере должен устанавливать имя файла в качестве заголовка окна представления, если пользователь подтвердит выбор файла.
+7. Метод saveDocumentAs() в контроллере должен создавать FileWriter на базе currentFile, если пользователь подтвердит выбор файла.
+8. Метод saveDocumentAs() в контроллере должен используя HTMLEditorKit переписывать данные из документа document в объект FileWriter-а, если пользователь подтвердит выбор файла.
+9. Метод saveDocumentAs() в контроллере не должен кидать исключения, а логировать через ExceptionHandler.
+
+
+HTML Editor (21)
+Для открытия или сохранения файла мы будем использовать JFileChooser из библиотеки swing.
+Объекты этого типа поддерживают фильтры, унаследованные от FileFilter.
+Сейчас мы напишем свой фильтр:
+21.1. Создай публичный класс HTMLFileFilter унаследованный от FileFilter.
+21.2. Мы хотим, чтобы окно выбора файла отображало только html/htm файлы или папки.
+Переопредели метод accept(File file), чтобы он возвращал true, если переданный файл директория или содержит в конце имени ".html" или ".htm" без учета регистра.
+21.3. Чтобы в окне выбора файла в описании доступных типов файлов отображался текст "HTML и HTM файлы" переопредели соответствующим образом метод getDescription().
+
+
+Требования:
+1. Класс HTMLFileFilter должен быть создан в отдельном файле.
+2. Класс HTMLFileFilter должен наследоваться от FileFilter.
+3. Метод accept(File f) класса HTMLFileFilter должен возвращать true, если переданный файл - директория или содержит в конце имени ".html" или ".htm" без учета регистра.
+4. Метод accept(File f) класса HTMLFileFilter должен возвращать false, если переданный файл - НЕ директория или НЕ содержит в конце имени ".html" или ".htm" без учета регистра.
+5. Метод getDescription() класса HTMLFileFilter должен возвращать строку "HTML и HTM файлы".
+
+
+HTML Editor (20)
+20.1. Реализуй метод создания нового документа createNewDocument() в контроллере. Он должен:
+20.1.1. Выбирать html вкладку у представления.
+20.1.2. Сбрасывать текущий документ.
+20.1.3. Устанавливать новый заголовок окна, например: "HTML редактор". Воспользуйся методом setTitle(), который унаследован в нашем представлении.
+20.1.4. Сбрасывать правки в Undo менеджере. Используй метод resetUndo представления.
+20.1.5. Обнулить переменную currentFile.
+20.2. Реализуй метод инициализации init() контроллера.
+Он должен просто вызывать метод создания нового документа.
+Проверь работу пункта меню Новый.
+
+Требования:
+1. Метод createNewDocument() в контроллере должен выбирать html вкладку у представления.
+2. Метод createNewDocument() в контроллере должен сбрасывать текущий документ.
+3. Метод createNewDocument() в контроллере должен устанавливать новый заголовок окна.
+4. Метод createNewDocument() в контроллере должен сбрасывать правки в Undo менеджере.
+5. Метод createNewDocument() в контроллере должен обнулить currentFile.
+6. Метод init() в контроллере должен вызывать метод создания нового документа.
+
+
+HTML Editor (19)
+Реализуем метод actionPerformed(ActionEvent actionEvent) у представления,
+этот метод наследуется от интерфейса ActionListener и будет вызваться при выборе пунктов меню, у которых наше представление указано в виде слушателя событий.
+19.1. Получи из события команду с помощью метода getActionCommand(). Это будет обычная строка.
+По этой строке ты можешь понять какой пункт меню создал данное событие.
+19.2. Если это команда "Новый", вызови у контроллера метод createNewDocument().
+В этом пункте и далее, если необходимого метода в контроллере еще нет - создай заглушки.
+19.3. Если это команда "Открыть", вызови метод openDocument().
+19.4. Если "Сохранить", то вызови saveDocument().
+19.5. Если "Сохранить как..." - saveDocumentAs().
+19.6. Если "Выход" - exit().
+19.7. Если "О программе", то вызови метод showAbout() у представления.
+Проверь, что заработали пункты меню Выход и О программе.
+
+Требования:
+1. Метод actionPerformed(ActionEvent actionEvent) должен получать из события команду с помощью метода getActionCommand().
+2. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "Новый", метод должен вызывать у контроллера createNewDocument().
+3. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "Открыть", метод должен вызывать у контроллера openDocument().
+4. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "Сохранить", метод должен вызывать у контроллера saveDocument().
+5. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "Сохранить как...", метод должен вызывать у контроллера saveDocumentAs().
+6. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "Выход", метод должен вызывать у контроллера exit().
+7. Если в метод actionPerformed(ActionEvent actionEvent) передано событие с командой "О программе", метод должен вызывать у представления showAbout().
+
+
+HTML Editor (18)
+Реализуй метод selectedTabChanged() представления. Этот метод вызывается, когда произошла смена выбранной вкладки. Итак:
+18.1. Метод должен проверить, какая вкладка сейчас оказалась выбранной.
+18.2. Если выбрана вкладка с индексом 0 (html вкладка), значит нам нужно получить текст из plainTextPane и установить его в контроллер с помощью метода setPlainText.
+18.3. Если выбрана вкладка с индексом 1 (вкладка с html текстом), то необходимо получить текст у контроллера с помощью метода getPlainText() и установить его в панель plainTextPane.
+18.4. Сбросить правки (вызвать метод resetUndo представления).
+
+
+Требования:
+1. Метод selectedTabChanged() должен проверить, какая вкладка сейчас оказалась выбранной.
+2. Если индекс вкладки равен 0 - метод selectedTabChanged() должен получить текст из plainTextPane и установить его в контроллер с помощью метода setPlainText().
+3. Если индекс вкладки равен 1 - метод selectedTabChanged() должен получить текст у контроллера с помощью метода getPlainText() и установить его в панель plainTextPane.
+4. Метод selectedTabChanged() должен сбросить правки.
+
+
 HTML Editor (17)
 Добавь метод String getPlainText() в контроллер. Он должен получать текст из документа со всеми html тегами.
 17.1. Создай объект StringWriter.

@@ -16,6 +16,7 @@ public class Solution {
 
     public Solution(String packageName) {
         this.packageName = packageName;
+        //System.out.println(packageName);
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
@@ -27,10 +28,40 @@ public class Solution {
     }
 
     public void scanFileSystem() throws ClassNotFoundException {
+        File dir = new File(packageName);
+        ClassLoader classLoader = Solution.class.getClassLoader();
+        for (String fileName : dir.list()) {
+            //System.out.println(fileName);
+            if (fileName.endsWith(".class")) {
+                String className = packageName.replaceAll("[/\\\\]", ".").substring(packageName.lastIndexOf("ru/")) + "." + fileName.substring(0, fileName.length() - 6);
+                //System.out.println(className);
+                Class<?> aClass = classLoader.loadClass(className);
+                hiddenClasses.add(aClass);
+            }
+        }
     }
 
     public HiddenClass getHiddenClassObjectByKey(String key) {
+        String lowerKey = key.toLowerCase();
+        try {
+            Class resultClass = null;
+            for (Class aClass : hiddenClasses) {
+                if (aClass.getSimpleName().toLowerCase().startsWith(lowerKey)) {
+                    resultClass = aClass;
+                    Constructor<?> declaredConstructor = resultClass.getDeclaredConstructor();
+                    declaredConstructor.setAccessible(true);
+                    return (HiddenClass) declaredConstructor.newInstance();
+                }
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
-

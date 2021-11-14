@@ -15,14 +15,57 @@ public class Solution {
         solution.humanRelationships = generateRelationships();
 
         Set<Integer> allFriendsAndPotentialFriends = solution.getAllFriendsAndPotentialFriends(4, 2);
-        System.out.println(allFriendsAndPotentialFriends);                              // Expected: [0, 1, 2, 3, 5, 7]
+        System.out.println(allFriendsAndPotentialFriends);                              //expected: [0, 1, 2, 3, 5, 7]
         Set<Integer> potentialFriends = solution.removeFriendsFromSet(allFriendsAndPotentialFriends, 4);
-        System.out.println(potentialFriends);                                           // Expected: [2, 5, 7]
+        System.out.println(potentialFriends);                                           //expected: [2, 5, 7]
     }
 
     public Set<Integer> getAllFriendsAndPotentialFriends(int index, int deep) {
-        //напишите тут ваш код
+        Set<Integer> result = new HashSet<>();
+        if (deep == 0) {
+            return result;
+        } else {
+            for (int i = 0; i < humanRelationships.length; i++) {
+                if ((i < index) && (index < humanRelationships.length) && humanRelationships[index][i]) {
+                    result.add(i);
+                } else if ((i > index) && humanRelationships[i][index]) {
+                    result.add(i);
+                }
+            }
+            Object[] arrayToProcess = result.toArray();
+            for (Object value : arrayToProcess) {
+                result.addAll(getAllFriendsAndPotentialFriends((Integer) value, deep - 1));
+            }
+            result.remove(index);
+        }
+        return result;
     }
+
+/*
+Сколько у человека потенциальных друзей?
+Сегодня рассмотрим часть функционала социальных сетей. Откуда сеть знает, каких людей предлагать тебе в друзья,
+которых ты можешь знать? Эту задачу легко решить с помощью графов.
+Твоя задача реализовать метод Set<Integer> getAllFriendsAndPotentialFriends(int index, int deep),
+который возвращает индексы людей, которые у тебя в друзьях уже есть и которых ты можешь знать.
+После этого отработает метод removeFriendsFromSet, и результат этого метода - это все потенциальные
+друзья человека с индексом index и глубиной поиска deep.
+
+Для упрощения будем рассматривать связи всех людей как двумерный массив humanRelationships
+(смотри пример массива в методе generateRelationships).
+По главной диагонали все элементы true, так как это один и тот же человек.
+Пересечение строки и столбца указывает, добавлены ли люди друг
+у друга в друзья (если true - то люди есть друг у друга в друзьях). Если человек с индексом k добавлен
+в друзья к человеку с индексом p, это означает, что у человека с индексом p в друзьях есть человек с индексом k.
+В метод передается два аргумента:
+int index - это индекс человека в массиве (начиная с нуля);
+int deep - глубина поиска друзей. Если Маша в друзьях у Наташи и у Маши в друзьях есть Оля, при глубине поиска = 1,
+для Наташи нужно добавить в результирующее множество Машу. Если глубина поиска = 2, для Наташи нужно добавить
+в результирующее множество Машу и как потенциального друга Олю. Если глубина поиска = 3, в это же множество нужно
+добавить еще и всех, с кем дружит Оля.
+Смотри пример в методе main.
+В множестве, которое возвращает метод getAllFriendsAndPotentialFriends не должно быть индекса index.
+ */
+
 
     // Remove from the set the people with whom you already have a relationship
     public Set<Integer> removeFriendsFromSet(Set<Integer> set, int index) {

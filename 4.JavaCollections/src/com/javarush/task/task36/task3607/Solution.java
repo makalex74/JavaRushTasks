@@ -1,5 +1,6 @@
 package com.javarush.task.task36.task3607;
 
+import java.util.Collections;
 import java.util.concurrent.DelayQueue;
 
 /* 
@@ -12,6 +13,6 @@ public class Solution {
     }
 
     public static Class getExpectedClass() {
-        return null;
+        return DelayQueue.class;
     }
 }

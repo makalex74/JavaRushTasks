@@ -33,7 +33,7 @@ public class Solution {
         for (String fileName : dir.list()) {
             //System.out.println(fileName);
             if (fileName.endsWith(".class")) {
-                String className = packageName.replaceAll("[/\\\\]", ".").substring(packageName.lastIndexOf("ru/")) + "." + fileName.substring(0, fileName.length() - 6);
+                String className = packageName.replaceAll("[/\\\\]", ".").substring(packageName.lastIndexOf("com/")) + "." + fileName.substring(0, fileName.length() - 6);
                 //System.out.println(className);
                 Class<?> aClass = classLoader.loadClass(className);
                 hiddenClasses.add(aClass);

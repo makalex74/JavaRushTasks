@@ -15,7 +15,11 @@ public class Solution {
     public static void main(String[] args) {
         Solution solution = new Solution();
         solution.initializeDates();
+        //System.out.println(solution.dates.size());
+        //System.out.println(solution.dates);
         solution.updateLastDate(3_600_000L);
+        //System.out.println(solution.dates.size());
+        //System.out.println(solution.dates);
         System.out.println(solution.isLastDateInDates());
     }
 
@@ -34,6 +38,8 @@ public class Solution {
     }
 
     protected void updateLastDate(long delta) {
+        dates.remove(lastDate);
         lastDate.setTime(lastDate.getTime() + delta);
+        dates.add(lastDate);
     }
 }

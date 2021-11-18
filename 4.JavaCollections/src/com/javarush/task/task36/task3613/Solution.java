@@ -12,6 +12,15 @@ public class Solution {
     }
 
     public static Class getExpectedClass() {
-        return null;
+/*
+ArrayBlockingQueue
+DelayQueue
+LinkedBlockingQueue
+LinkedBlockingDeque
+LinkedTransferQueue
+PriorityBlockingQueue
+SynchronousQueue
+ */
+        return SynchronousQueue.class;
     }
 }

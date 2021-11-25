@@ -1,0 +1,27 @@
+DEBUG Solution:20 - Execute constructor Solution this.value1 = 2 this.value2 = hello this.value3 = Sat Mar 06 21:01:37 GMT+03:00 2021
+DEBUG Solution:76 - Execute setValue1(1)
+DEBUG Solution:81 - Execute setValue2(Hello, java)
+DEBUG Solution:86 - Execute setValue3(Sat Mar 06 21:01:37 GMT+03:00 2021)
+DEBUG Solution:48 - Execute calculateAndSetValue3(-128)  value1 = -128
+ERROR Solution:71 - ArithmeticException: number1 = 1, number2 = 0
+java.lang.ArithmeticException: / by zero
+	at com.javarush.task.task34.task3412.Solution.divide(Solution.java:69)
+	at com.javarush.task.task34.task3412.Solution.main(Solution.java:36)
+DEBUG Solution:20 - Execute constructor Solution this.value1 = 2 this.value2 = hello this.value3 = Sat Mar 06 21:03:15 GMT+03:00 2021
+DEBUG Solution:76 - Execute setValue1(1)
+DEBUG Solution:81 - Execute setValue2(Hello, java)
+DEBUG Solution:86 - Execute setValue3(Sat Mar 06 21:03:15 GMT+03:00 2021)
+DEBUG Solution:48 - Execute calculateAndSetValue3(-128)  value1 = -128
+ERROR Solution:71 - ArithmeticException: number1 = 1, number2 = 0
+java.lang.ArithmeticException: / by zero
+	at com.javarush.task.task34.task3412.Solution.divide(Solution.java:69)
+	at com.javarush.task.task34.task3412.Solution.main(Solution.java:36)
+DEBUG Solution:20 - Execute constructor Solution this.value1 = 2 this.value2 = hello this.value3 = Sat Mar 06 21:04:04 GMT+03:00 2021
+DEBUG Solution:76 - Execute setValue1(1)
+DEBUG Solution:81 - Execute setValue2(Hello, java)
+DEBUG Solution:86 - Execute setValue3(Sat Mar 06 21:04:04 GMT+03:00 2021)
+DEBUG Solution:48 - Execute calculateAndSetValue3(-128)  value1 = -128
+ERROR Solution:71 - ArithmeticException: number1 = 1, number2 = 0
+java.lang.ArithmeticException: / by zero
+	at com.javarush.task.task34.task3412.Solution.divide(Solution.java:69)
+	at com.javarush.task.task34.task3412.Solution.main(Solution.java:36)

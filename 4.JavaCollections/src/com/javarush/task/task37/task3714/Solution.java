@@ -20,35 +20,24 @@ public class Solution {
     }
 
     public static int romanToInteger(String s) {
-        char[] letters = s.toCharArray();
-        int[] digits = new int[letters.length];
-        for (int i=0; i< letters.length; i++) {
-            switch (letters[i]) {
-                case 'I':
-                    digits[i]=1;
-                    break;
-                case 'V':
-                    digits[i]=5;
-                    break;
-                case 'X':
-                    digits[i]=10;
-                    break;
-                case 'L':
-                    digits[i]=50;
-                    break;
-                case 'C':
-                    digits[i]=100;
-                    break;
-                case 'D':
-                    digits[i]=500;
-                    break;
-                case 'M':
-                    digits[i]=1000;
-                    break;
+        Map<Character, Integer> romanMap = new HashMap<>();
+        romanMap.put('I', 1);
+        romanMap.put('V', 5);
+        romanMap.put('X', 10);
+        romanMap.put('L', 50);
+        romanMap.put('C', 100);
+        romanMap.put('D', 500);
+        romanMap.put('M', 1000);
+
+        int sum = romanMap.get(s.charAt(s.length() - 1));
+
+        for (int i = s.length() - 2; i >= 0; --i) {
+            if (romanMap.get(s.charAt(i)) < romanMap.get(s.charAt(i + 1))) {
+                sum -= romanMap.get(s.charAt(i));
+            } else {
+                sum += romanMap.get(s.charAt(i));
             }
         }
-        System.out.println(Arrays.toString(digits));
-        //{I, V, X, L, C, D, M}
-        return 0;
+        return sum;
     }
 }

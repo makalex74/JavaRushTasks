@@ -50,6 +50,6 @@ text 2
     }
 
     public static Map getExpectedMap() {
-        return new TreeMap();
+        return new HashMap();
     }
 }

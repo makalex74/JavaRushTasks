@@ -13,6 +13,11 @@ public class SecurityProxyConnector implements Connector{
 
     @Override
     public void connect() {
-        if (securityChecker.performSecurityCheck()) simpleConnector.connect();
+        System.out.println("Performing security check...");
+        if (securityChecker.performSecurityCheck()) {
+            simpleConnector.connect();
+        } else {
+            System.out.println("FAILED SECURITY CHECK, WON'T CONNECT!");
+        }
     }
 }

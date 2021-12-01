@@ -1,6 +1,10 @@
 package com.javarush.games.minesweeper;
 
-import com.javarush.engine.cell.*;
+import com.javarush.engine.cell.Color;
+import com.javarush.engine.cell.Game;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MinesweeperGame extends Game {
     private static final int SIDE = 9;
@@ -16,8 +20,7 @@ public class MinesweeperGame extends Game {
     private void createGame() {
         for (int y = 0; y < SIDE; y++) {
             for (int x = 0; x < SIDE; x++) {
-                int randomNumber = getRandomNumber(10);
-                boolean isMine = randomNumber < 1;
+                boolean isMine = getRandomNumber(10) < 1;
                 if (isMine) {
                     countMinesOnField++;
                 }
@@ -25,5 +28,24 @@ public class MinesweeperGame extends Game {
                 setCellColor(x, y, Color.ORANGE);
             }
         }
+    }
+
+    private List<GameObject> getNeighbors(GameObject gameObject) {
+        List<GameObject> result = new ArrayList<>();
+        for (int y = gameObject.y - 1; y <= gameObject.y + 1; y++) {
+            for (int x = gameObject.x - 1; x <= gameObject.x + 1; x++) {
+                if (y < 0 || y >= SIDE) {
+                    continue;
+                }
+                if (x < 0 || x >= SIDE) {
+                    continue;
+                }
+                if (gameField[y][x] == gameObject) {
+                    continue;
+                }
+                result.add(gameField[y][x]);
+            }
+        }
+        return result;
     }
 }

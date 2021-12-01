@@ -1,7 +1,6 @@
 package com.javarush.games.minesweeper;
 
-import com.javarush.engine.cell.Color;
-import com.javarush.engine.cell.Game;
+import com.javarush.engine.cell.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +27,13 @@ public class MinesweeperGame extends Game {
                 setCellColor(x, y, Color.ORANGE);
             }
         }
+        countMineNeighbors();
     }
 
     private List<GameObject> getNeighbors(GameObject gameObject) {
         List<GameObject> result = new ArrayList<>();
-        for (int y = gameObject.y - 1; y <= gameObject.y + 1; y++) {
-            for (int x = gameObject.x - 1; x <= gameObject.x + 1; x++) {
+        for (int y = gameObject.y - 1; y <= gameObject.y + 1 ; y++) {
+            for (int x = gameObject.x - 1; x <= gameObject.x + 1 ; x++) {
                 if (y < 0 || y >= SIDE) {
                     continue;
                 }
@@ -47,5 +47,20 @@ public class MinesweeperGame extends Game {
             }
         }
         return result;
+    }
+
+    private void countMineNeighbors() {
+        for (int y = 0; y < SIDE; y++) {
+            for (int x = 0; x < SIDE; x++) {
+                GameObject gameObject = gameField[y][x];
+                if (!gameObject.isMine) {
+                    for (GameObject neighbor : getNeighbors(gameObject)) {
+                        if (neighbor.isMine) {
+                            gameObject.countMineNeighbors++;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

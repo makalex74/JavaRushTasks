@@ -1,5 +1,7 @@
 package com.javarush.games.spaceinvaders.gameobjects;
 
+import com.javarush.engine.cell.*;
+
 public class GameObject {
     public double x;
     public double y;

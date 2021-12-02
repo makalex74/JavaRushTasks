@@ -8,5 +8,6 @@ public class Solution {
         //LogParser logParser = new LogParser(Paths.get("c:/logs/"));
         LogParser logParser = new LogParser(Paths.get("D:\\IdeaProjects\\JavaRushTasks\\4.JavaCollections\\src\\com\\javarush\\task\\task39\\task3913\\logs"));
         System.out.println(logParser.getNumberOfUniqueIPs(null, new Date()));
+        System.out.println(logParser.getAllUsers());
     }
 }

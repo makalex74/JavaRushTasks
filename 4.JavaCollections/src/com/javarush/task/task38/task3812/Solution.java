@@ -1,9 +1,5 @@
 package com.javarush.task.task38.task3812;
 
-/* 
-Обработка аннотаций
-*/
-
 public class Solution {
     public static void main(String[] args) {
         printFullyQualifiedNames(Solution.class);
@@ -14,10 +10,26 @@ public class Solution {
     }
 
     public static boolean printFullyQualifiedNames(Class c) {
-        return true;
+        if (c.isAnnotationPresent(PrepareMyTest.class)){
+            PrepareMyTest prepareMyTest = (PrepareMyTest) c.getAnnotation(PrepareMyTest.class);
+            for (String names: prepareMyTest.fullyQualifiedNames()) {
+                System.out.println(names);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static boolean printValues(Class c) {
-        return true;
+        if (c.isAnnotationPresent(PrepareMyTest.class)){
+            PrepareMyTest prepareMyTest = (PrepareMyTest) c.getAnnotation(PrepareMyTest.class);
+            for (Class clazz:prepareMyTest.value()) {
+                System.out.println(clazz.getSimpleName());
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -5,6 +5,16 @@ import java.util.List;
 
 /* 
 Неверные аннотации
+Исправь неверные аннотации. Код должен компилироваться без ошибок и предупреждений.
+
+Избегай избыточности. Не нужно писать подряд все знакомые тебе аннотации.
+
+
+Requirements:
+1. Аннотация @Main должна использоваться только для аннотирования методов.
+2. Метод main класса Solution должен быть отмечен только аннотацией @Main.
+3. Метод overriddenMethod класса SubSolution должен быть отмечен только аннотацией @Override.
+4. В методе uncheckedCall должны быть подавлены unchecked warnings с помощью аннотации.
 */
 
 public class Solution {
@@ -18,12 +28,12 @@ public class Solution {
     }
 
     public class SubSolution extends Solution {
-        @SafeVarargs
+        @Override
         public void overriddenMethod() {
             System.out.println(uncheckedCall());
         }
 
-        @Override
+        @SuppressWarnings("unchecked")
         List uncheckedCall() {
             List list = new ArrayList();
             list.add("hello");

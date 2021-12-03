@@ -15,8 +15,7 @@ public class HHStrategy implements Strategy {
     @Override
     public List<Vacancy> getVacancies(String searchString) {
         try {
-            Document document = Jsoup.connect(String.format(URL_FORMAT, "Krasnodar", 0)).get();
-            //System.out.println(document);
+            Document document = Jsoup.connect(String.format(URL_FORMAT, "MyTown", 0)).get();
         } catch (IOException e) {
             e.printStackTrace();
         }

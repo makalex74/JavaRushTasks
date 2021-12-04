@@ -26,9 +26,12 @@ public class Solution {
 
     public void sendPost(String url, String urlParameters) throws Exception {
         HttpClient client = getHttpClient();
-        HttpGet request = new HttpGet(url);
+        HttpPost request = new HttpPost(url);
 
         request.addHeader("User-Agent", "Mozilla/5.0");
+
+        List<NameValuePair> listUrlParameters = URLEncodedUtils.parse(urlParameters, StandardCharsets.UTF_8);
+        request.setEntity(new UrlEncodedFormEntity(listUrlParameters));
 
         HttpResponse response = client.execute(request);
 

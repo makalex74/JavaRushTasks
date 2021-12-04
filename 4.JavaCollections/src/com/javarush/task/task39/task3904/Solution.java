@@ -14,7 +14,27 @@ public class Solution {
     }
 
     public static long numberOfPossibleAscents(int n) {
+        if (n < 0) {
+            return 0;
+        }
+        long[] memo = new long[n + 1];
+        Arrays.fill(memo, -1);
+        return numberOfPossibleAscents(n, memo);
+    }
 
+    private static long numberOfPossibleAscents(int n, long[] memo) {
+        if (n < 0) {
+            return 0;
+        } else if (n == 0) {
+            return 1;
+        } else if (memo[n] > -1) {
+            return memo[n];
+        } else {
+            memo[n] = numberOfPossibleAscents(n - 1, memo)
+                    + numberOfPossibleAscents(n - 2, memo)
+                    + numberOfPossibleAscents(n - 3, memo);
+            return memo[n];
+        }
     }
 }
 

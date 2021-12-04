@@ -15,6 +15,12 @@ public class Solution {
     }
 
     public static String getWeekdayOfBirthday(String birthday, String year) {
-        //напишите тут ваш код
+        DateTimeFormatter birthdayDateFormat = DateTimeFormatter.ofPattern("d.M.y");
+        LocalDate birthdayDate = LocalDate.parse(birthday, birthdayDateFormat);
+
+        DateTimeFormatter yearFormat = DateTimeFormatter.ofPattern("y");
+        Year yearDate = Year.parse(year, yearFormat);
+
+        return birthdayDate.withYear(yearDate.getValue()).format(DateTimeFormatter.ofPattern("EEEE").withLocale(Locale.ITALIAN));
     }
 }

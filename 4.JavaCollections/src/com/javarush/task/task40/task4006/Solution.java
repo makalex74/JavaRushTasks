@@ -16,20 +16,22 @@ public class Solution {
     }
 
     public static void getSite(URL url) {
-        try {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        String server = url.getHost();
+        String path = url.getPath();
 
-            connection.setRequestMethod("GET");
+        try (Socket socket = new Socket(server, 80);
+             PrintStream out = new PrintStream(socket.getOutputStream());
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String responseLine;
+            out.println("GET " + path);
+            out.println();
 
-            while ((responseLine = bufferedReader.readLine()) != null) {
-                System.out.println(responseLine);
+            String line = in.readLine();
+            while (line != null) {
+                System.out.println(line);
+                line = in.readLine();
             }
-            bufferedReader.close();
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

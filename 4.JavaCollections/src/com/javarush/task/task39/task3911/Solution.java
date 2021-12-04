@@ -9,6 +9,7 @@ Rollback
 public class Solution {
     public static void main(String[] args) {
         int n = 3;
+        Software software = new Software();
         for (int i = 1; i < 7; i++) {
             software.addNewVersion(i, "Description of version #" + i);
         }
@@ -19,7 +20,7 @@ public class Solution {
         }
         System.out.println("The current version is " + software.getCurrentVersion());
 
-        System.out.println("ROLLING BACK to version " + n);
+        System.out.println("\nROLLING BACK to version " + n);
         software.rollback(n);
 
         System.out.println("\nPrinting all versions ");

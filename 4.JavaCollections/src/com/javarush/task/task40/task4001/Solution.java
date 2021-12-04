@@ -19,8 +19,14 @@ public class Solution {
     public void sendPost(URL url, String urlParameters) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod("POST");
         connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
 
         int responseCode = connection.getResponseCode();
         System.out.println("Response Code: " + responseCode);

@@ -55,6 +55,15 @@ public class Solution {
     }
 
     public static void setAttachment(Message message, String filename) throws MessagingException {
-        message.setText(filename);
+        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+
+        FileDataSource fds = new FileDataSource(filename);
+        mimeBodyPart.setDataHandler(new DataHandler(fds));
+        mimeBodyPart.setFileName(fds.getName());
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(mimeBodyPart);
+
+        message.setContent(multipart);
     }
 }
